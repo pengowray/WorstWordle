@@ -1,52 +1,141 @@
 ﻿// Find the most ambiguous ("worst") four-letter combos in Wordle
 
-// e.g. "BU_ON" => ["BUXON"]
-Dictionary<string, List<String>> list = new();
 
-string wordle_allowed_guesses = @"Data\wordle-allowed-guesses.txt";
-string wordle_answers_alphabetical = @"Data\wordle-answers-alphabetical.txt";
+string wordle_long_list = @"Data\wordle-allowed-guesses.txt";
+string wordle_short_list = @"Data\wordle-answers-alphabetical.txt";
 
-//pick word list:
-//string wordlist_file = wordle_allowed_guesses;
-string wordlist_file = wordle_answers_alphabetical;
+string output_long_list_focus = "output-longlist-focus.txt";
+string output_short_list_focus = "output-shortlist-focus.txt";
+string output_full_long_list_focus = "output-full-list.txt";
+
 
 Console.WriteLine("Finding the most ambiguous (\"worst\") four-letter combos in Wordle.");
-Console.WriteLine(wordlist_file);
 Console.WriteLine();
 
-var wordlist = File.ReadAllLines(wordlist_file);
+var longList = File.ReadAllLines(wordle_long_list);
+var shortList = File.ReadAllLines(wordle_short_list);
 
+var longCombos = GetCombos(shortList.Concat(longList));
+var shortCombos = GetCombos(shortList);
 
-foreach (var word in wordlist) {
-    if (string.IsNullOrWhiteSpace(word)) continue;
-    if (word.StartsWith("//")) continue;
-    if (word.Length != 5) continue;
+Dictionary<string, List<String>> GetCombos(IEnumerable<string> words) {
+    // e.g. "wor_y" => ["wordy", "worry"]
+    Dictionary<string, List<String>> combos = new();
 
-    for (int i = 0; i < word.Length; i++) {
-        char[] chars = word.ToCharArray();
-        chars[i] = '_'; 
-        string underscored = new string(chars); // e.g. "_IGHT" or "F_GHT"
+    foreach (var word in words) {
+        if (string.IsNullOrWhiteSpace(word)) continue;
+        if (word.StartsWith("//")) continue;
+        if (word.Length != 5) continue;
 
-        if (list.ContainsKey(underscored)) {
-            list[underscored].Add(word);
-        } else {
-            var newList = new List<string>();
-            newList.Add(word);
-            list[underscored] = newList;
+        for (int i = 0; i < word.Length; i++) {
+            char[] chars = word.ToCharArray();
+            chars[i] = '_';
+            string underscored = new string(chars); // e.g. "_IGHT" or "F_GHT"
+
+            if (combos.ContainsKey(underscored)) {
+                combos[underscored].Add(word);
+            } else {
+                var newList = new List<string>();
+                newList.Add(word);
+                combos[underscored] = newList;
+            }
         }
     }
+    return combos;
 }
 
-//sort list
-var worstCombos = list.OrderByDescending(l => l.Value.Count).ThenBy(l => l.Key)
-    .Where(l => l.Value.Count >= 2); // only when combo has 2+ words
-    //.Take(100); // only first 100
 
-//print list
-foreach (var item in worstCombos) {
-    Console.WriteLine($"{item.Value.Count}. {item.Key}: {string.Join(" ", item.Value)}");
+void OutputLongFocus() {
+    using StreamWriter writer = new(output_long_list_focus);
+    var worstShortListCombos = shortCombos
+        //.OrderByDescending(l => l.Value.Count).ThenByDescending(l => longCombos[l.Key].Count).ThenBy(l => l.Key) // by short list count
+        .OrderByDescending(l => longCombos[l.Key].Count).ThenBy(l => l.Key) // by long list count
+        //.Where(l => l.Value.Count >= 2 || (l.Value.Count == 1 && longCombos[l.Key].Count >= 2)); // only if 2 or more items and 1 is in the short list
+        .Where(l => l.Value.Any()); // at least 1 short list
+
+    foreach (var item in worstShortListCombos) {
+
+        var key = item.Key;
+        var longListGroup = longCombos[key];
+        var nonAnswersButValid = longListGroup.Count - item.Value.Count;
+
+        if (nonAnswersButValid > 0) {
+            // put asterix on non-answer words
+            var longListGroupStarred = longListGroup
+                .OrderBy(word => word)
+                .Select(word => item.Value.Contains(word) ? word : $"*{word}");
+
+            //string count = $"({item.Value.Count} + {nonAnswersButValid})";
+            //string count = $"({item.Value.Count} / {longListGroup.Count})";
+            string count = $"({longListGroup.Count})";
+            writer.WriteLine($"* {key} {count}: {string.Join(" ", longListGroupStarred)}");
+        } else {
+            string count = $"({item.Value.Count})";
+            writer.WriteLine($"* {key} {count}: {string.Join(" ", item.Value)}");
+        }
+    }
+    writer.Flush();
+    writer.Close();
 }
+OutputLongFocus();
 
-//results:
-// - https://gist.github.com/pengowray/0b09d20f0819f338ec0d3caded0474f1#file-worst-answers-txt
-// - https://gist.github.com/pengowray/0b09d20f0819f338ec0d3caded0474f1#file-worst-allowed-guesses-txt
+void OutputShortFocus() {
+    using StreamWriter writer = new(output_short_list_focus);
+    var worstShortListCombos = shortCombos
+        .OrderByDescending(l => l.Value.Count).ThenByDescending(l => longCombos[l.Key].Count).ThenBy(l => l.Key) // by short list count
+        //.Where(l => l.Value.Count >= 2 || (l.Value.Count == 1 && longCombos[l.Key].Count >= 2)); // only if 2 or more items and 1 is in the short list
+        .Where(l => l.Value.Any()); // at least 1 short list
+
+    foreach (var item in worstShortListCombos) {
+        var key = item.Key;
+        var longListGroup = longCombos[key];
+        var nonAnswersButValid = longListGroup.Count - item.Value.Count;
+
+        if (nonAnswersButValid > 0) {
+            // put asterix on non-answer words
+            var longListGroupStarred = longListGroup
+                //.OrderBy(word => word) // note: default order puts short list first
+                .Select(word => item.Value.Contains(word) ? word : $"*{word}");
+
+            string count = $"({item.Value.Count} + {nonAnswersButValid})";
+            //string count = $"({item.Value.Count} / {longListGroup.Count})";
+            //string count = $"({longListGroup.Count})";
+            writer.WriteLine($"* {key} {count}: {string.Join(" ", longListGroupStarred)}");
+        } else {
+            string count = $"({item.Value.Count})";
+            writer.WriteLine($"* {key} {count}: {string.Join(" ", item.Value)}");
+        }
+    }
+    writer.Flush();
+    writer.Close();
+}
+OutputShortFocus();
+
+
+void OutputLongList() {
+    using StreamWriter writer = new(output_full_long_list_focus);
+    var worstLongListCombos = longCombos
+        .OrderByDescending(l => l.Value.Count) // by long count
+        .ThenByDescending(l => shortCombos.ContainsKey(l.Key) ? shortCombos[l.Key].Count : 0)
+        .ThenBy(l => l.Key);
+
+    foreach (var longItem in worstLongListCombos) {
+
+        var key = longItem.Key;
+        var longListGroup = longItem.Value;
+        var shortListGroup = shortCombos.ContainsKey(key) ? shortCombos[key] : new List<string>();
+        var nonAnswersButValid = longListGroup.Count - shortListGroup.Count;
+
+        // put asterix on non-answer words
+        var longListGroupStarred = longListGroup
+            //.OrderBy(word => word)
+            .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
+
+        string count = $"({longListGroup.Count} = {shortListGroup.Count} + {nonAnswersButValid})";
+        writer.WriteLine($"* {key} {count}: {string.Join(" ", longListGroupStarred)}");
+    }
+    writer.Flush();
+    writer.Close();
+}
+OutputLongList();
+
