@@ -1,8 +1,10 @@
 ﻿// Find the most ambiguous ("worst") four-letter combos in Wordle
 
 
-string wordle_long_list = @"Data\wordle-allowed-guesses.txt";
-string wordle_short_list = @"Data\wordle-answers-alphabetical.txt";
+//string wordle_long_list = @"Data\wordle-allowed-guesses.txt";
+//string wordle_short_list = @"Data\wordle-answers-alphabetical.txt";
+string wordle_long_list = @"Data\wordle-nyt-allowed-guesses.txt";
+string wordle_short_list = @"Data\wordle-nyt-answers-alphabetical.txt";
 
 string output_long_list_focus = "output-longlist-focus.txt";
 string output_short_list_focus = "output-shortlist-focus.txt";
@@ -10,7 +12,7 @@ string output_full_long_list_focus = "output-full-list.txt";
 
 string prefix = "- "; // list prefix
 
-Console.WriteLine("Finding the most ambiguous (\"worst\") four-letter combos in Wordle.");
+Console.WriteLine("Finding the most ambiguous (\"worst\") four-letter combos in Wordle...");
 Console.WriteLine();
 
 var longList = File.ReadAllLines(wordle_long_list).OrderBy(w => w); // sorting is redundant but do anyway
@@ -152,3 +154,4 @@ void OutputLongList() {
 }
 OutputLongList();
 
+Console.WriteLine("Done.");
