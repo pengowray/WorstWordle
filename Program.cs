@@ -1,4 +1,4 @@
-﻿// Find the most ambiguous ("worst") four-letter combos in Wordle
+﻿// Find the most ambiguous ("worst") four-letter combos in Wordle. Streak killers
 
 
 //string wordle_long_list = @"Data\wordle-allowed-guesses.txt";
@@ -10,7 +10,7 @@ string output_long_list_focus = "output-longlist-focus.txt";
 string output_short_list_focus = "output-shortlist-focus.txt";
 string output_full_long_list_focus = "output-full-list.txt";
 
-string prefix = "- "; // list prefix
+string prefix = ""; //  "- "; // list prefix
 
 Console.WriteLine("Finding the most ambiguous (\"worst\") four-letter combos in Wordle...");
 Console.WriteLine();
@@ -78,10 +78,10 @@ void OutputLongFocus() {
             //string count = $"({shortListGroup.Count} / {longListGroup.Count})";
             //string count = $"({longListGroup.Count})";
             string count = $"({longListGroup.Count} = {shortListGroup.Count} + {nonAnswersButValid})";
-            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
+            writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", longListGroupStarred)}");
         } else {
             string count = $"({shortListGroup.Count})";
-            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", shortListGroup)}");
+            writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", shortListGroup)}");
         }
     }
     writer.Flush();
@@ -118,10 +118,10 @@ void OutputShortFocus() {
             //string count = $"({longListGroup.Count} = {shortListGroup.Count} + {nonAnswersButValid})";
             string count = $"({shortListGroup.Count} + {nonAnswersButValid} = {longListGroup.Count})";
 
-            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
+            writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", longListGroupStarred)}");
         } else {
             string count = $"({shortListGroup.Count})";
-            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", shortListGroup)}");
+            writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", shortListGroup)}");
         }
     }
     writer.Flush();
@@ -154,7 +154,7 @@ void OutputLongList() {
             .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
 
         string count = $"({longListGroup.Count} = {shortListGroup.Count} + {nonAnswersButValid})";
-        writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
+        writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", longListGroupStarred)}");
     }
     writer.Flush();
     writer.Close();
