@@ -8,14 +8,15 @@ string output_long_list_focus = "output-longlist-focus.txt";
 string output_short_list_focus = "output-shortlist-focus.txt";
 string output_full_long_list_focus = "output-full-list.txt";
 
+string prefix = "- "; // list prefix
 
 Console.WriteLine("Finding the most ambiguous (\"worst\") four-letter combos in Wordle.");
 Console.WriteLine();
 
-var longList = File.ReadAllLines(wordle_long_list);
-var shortList = File.ReadAllLines(wordle_short_list);
+var longList = File.ReadAllLines(wordle_long_list).OrderBy(w => w); // sorting is redundant but do anyway
+var shortList = File.ReadAllLines(wordle_short_list).OrderBy(w => w);
 
-var longCombos = GetCombos(shortList.Concat(longList));
+var longCombos = GetCombos(shortList.Concat(longList)); // Note: Order matters here: displaying lists with default sorting shows short list items then long list
 var shortCombos = GetCombos(shortList);
 
 Dictionary<string, List<String>> GetCombos(IEnumerable<string> words) {
@@ -47,6 +48,10 @@ Dictionary<string, List<String>> GetCombos(IEnumerable<string> words) {
 
 void OutputLongFocus() {
     using StreamWriter writer = new(output_long_list_focus);
+
+    writer.WriteLine("Worst combos ordered by number of long list solutions: List of the most ambiguous four-letter wordle combos, ordered by number of allowed guesses. Only includes combos with at least one real answer from the short list. A '*' means the guess is allowed but not in the short list of possible answers.");
+    writer.WriteLine("");
+
     var worstShortListCombos = shortCombos
         //.OrderByDescending(l => l.Value.Count).ThenByDescending(l => longCombos[l.Key].Count).ThenBy(l => l.Key) // by short list count
         .OrderByDescending(l => longCombos[l.Key].Count).ThenBy(l => l.Key) // by long list count
@@ -62,16 +67,16 @@ void OutputLongFocus() {
         if (nonAnswersButValid > 0) {
             // put asterix on non-answer words
             var longListGroupStarred = longListGroup
-                .OrderBy(word => word)
+                //.OrderBy(word => word)
                 .Select(word => item.Value.Contains(word) ? word : $"*{word}");
 
             //string count = $"({item.Value.Count} + {nonAnswersButValid})";
             //string count = $"({item.Value.Count} / {longListGroup.Count})";
             string count = $"({longListGroup.Count})";
-            writer.WriteLine($"* {key} {count}: {string.Join(" ", longListGroupStarred)}");
+            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
         } else {
             string count = $"({item.Value.Count})";
-            writer.WriteLine($"* {key} {count}: {string.Join(" ", item.Value)}");
+            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", item.Value)}");
         }
     }
     writer.Flush();
@@ -81,6 +86,10 @@ OutputLongFocus();
 
 void OutputShortFocus() {
     using StreamWriter writer = new(output_short_list_focus);
+
+    writer.WriteLine("Worst combos ordered by most short list solutions: List of the most ambiguous four-letter wordle combos, ordered by number of possible short list solutions. Only includes combos with at least one real answer from the short list. Count is given as ('short list solutions' + 'additional long list solutions'). A '*' means the guess is allowed but not in the short list of possible answers.");
+    writer.WriteLine("");
+
     var worstShortListCombos = shortCombos
         .OrderByDescending(l => l.Value.Count).ThenByDescending(l => longCombos[l.Key].Count).ThenBy(l => l.Key) // by short list count
         //.Where(l => l.Value.Count >= 2 || (l.Value.Count == 1 && longCombos[l.Key].Count >= 2)); // only if 2 or more items and 1 is in the short list
@@ -100,10 +109,10 @@ void OutputShortFocus() {
             string count = $"({item.Value.Count} + {nonAnswersButValid})";
             //string count = $"({item.Value.Count} / {longListGroup.Count})";
             //string count = $"({longListGroup.Count})";
-            writer.WriteLine($"* {key} {count}: {string.Join(" ", longListGroupStarred)}");
+            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
         } else {
             string count = $"({item.Value.Count})";
-            writer.WriteLine($"* {key} {count}: {string.Join(" ", item.Value)}");
+            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", item.Value)}");
         }
     }
     writer.Flush();
@@ -114,6 +123,10 @@ OutputShortFocus();
 
 void OutputLongList() {
     using StreamWriter writer = new(output_full_long_list_focus);
+
+    writer.WriteLine("Full list of worst combos ordered by most long list solutions: List of the most ambiguous four-letter wordle combos, ordered by number of possible long list solutions. Includes combos even without a real answer from the short list. Count is given as ('total' = 'short list solutions' + 'additional long list solutions'). A '*' means the guess is allowed but not in the short list of possible answers.");
+    writer.WriteLine("");
+
     var worstLongListCombos = longCombos
         .OrderByDescending(l => l.Value.Count) // by long count
         .ThenByDescending(l => shortCombos.ContainsKey(l.Key) ? shortCombos[l.Key].Count : 0)
@@ -132,7 +145,7 @@ void OutputLongList() {
             .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
 
         string count = $"({longListGroup.Count} = {shortListGroup.Count} + {nonAnswersButValid})";
-        writer.WriteLine($"* {key} {count}: {string.Join(" ", longListGroupStarred)}");
+        writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
     }
     writer.Flush();
     writer.Close();
