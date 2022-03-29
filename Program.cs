@@ -51,7 +51,7 @@ Dictionary<string, List<String>> GetCombos(IEnumerable<string> words) {
 void OutputLongFocus() {
     using StreamWriter writer = new(output_long_list_focus);
 
-    writer.WriteLine("Worst combos ordered by most long list solutions: List of the most ambiguous four-letter wordle combos, ordered by number of allowed guesses. Only includes combos with at least one real answer from the short list. Count is given as ('total' = 'short list solutions' + 'additional long list solutions'). A '*' means the guess is allowed but not in the short list of possible answers.");
+    writer.WriteLine("Worst combos ordered by most long list solutions: List of the most ambiguous four-letter wordle combos, ordered by number of allowed guesses. Only includes combos with at least one real answer from the short list. Count is given as ('total' = 'short list solutions' + 'additional long list solutions'). A '*' means the guess is allowed but not in the short list of possible answers. Source: https://github.com/pengowray/WorstWordle");
     writer.WriteLine("");
 
     var worstShortListCombos = shortCombos
@@ -92,7 +92,7 @@ OutputLongFocus();
 void OutputShortFocus() {
     using StreamWriter writer = new(output_short_list_focus);
 
-    writer.WriteLine("Worst combos ordered by most short list solutions: List of the most ambiguous four-letter wordle combos, ordered by most number of possible short list solutions. Count is given as ('short list solutions' + 'additional long list solutions' = 'total'). A '*' means the guess is allowed but not in the short list of possible answers.");
+    writer.WriteLine("Worst combos ordered by most short list solutions: List of the most ambiguous four-letter wordle combos, ordered by most number of possible short list solutions. Count is given as ('short list solutions' + 'additional long list solutions' = 'total'). A '*' means the guess is allowed but not in the short list of possible answers. Source: https://github.com/pengowray/WorstWordle");
     writer.WriteLine("");
 
     var worstShortListCombos = shortCombos
@@ -133,7 +133,7 @@ OutputShortFocus();
 void OutputLongList() {
     using StreamWriter writer = new(output_full_long_list_focus);
 
-    writer.WriteLine("Full list of worst combos ordered by most long list solutions: List of the most ambiguous four-letter wordle combos, ordered by number of possible long list solutions. Includes combos even without a real answer from the short list. Count is given as ('total' = 'short list solutions' + 'additional long list solutions'). A '*' means the guess is allowed but not in the short list of possible answers.");
+    writer.WriteLine("Full list of worst combos ordered by most long list solutions: List of the most ambiguous four-letter wordle combos, ordered by number of possible long list solutions. Includes combos even without a real answer from the short list. Count is given as ('total' = 'short list solutions' + 'additional long list solutions'). A '*' means the guess is allowed but not in the short list of possible answers. Source: https://github.com/pengowray/WorstWordle");
     writer.WriteLine("");
 
     var worstLongListCombos = longCombos
