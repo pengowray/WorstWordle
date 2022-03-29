@@ -13,6 +13,8 @@ Wordle 282 6/6
 🟩🟩🟩🟩🟩
 ```
 
+# Output
+
 Worst combos, ordered by most short list solutions:
 
 -  **_ight** (9 + 6 = 15): eight fight light might night right sight tight wight *aight *bight *dight *hight *kight *pight
