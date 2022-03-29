@@ -72,7 +72,7 @@ void OutputLongFocus() {
             // put asterix on non-answer words
             var longListGroupStarred = longListGroup
                 //.OrderBy(word => word)
-                .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
+                .Select(word => GiveStar(key, word, shortListGroup));
 
             //string count = $"({shortListGroup.Count} + {nonAnswersButValid})";
             //string count = $"({shortListGroup.Count} / {longListGroup.Count})";
@@ -81,7 +81,9 @@ void OutputLongFocus() {
             writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", longListGroupStarred)}");
         } else {
             string count = $"({shortListGroup.Count})";
-            writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", shortListGroup)}");
+            //.Select(word => GiveStar(key, word, shortListGroup))
+            // note: never has "*"
+            writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", shortListGroup.Select(word => GiveStar(key, word, shortListGroup)))}");
         }
     }
     writer.Flush();
@@ -110,7 +112,7 @@ void OutputShortFocus() {
             // put asterix on non-answer words
             var longListGroupStarred = longListGroup
                 //.OrderBy(word => word) // note: default order puts short list first
-                .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
+                .Select(word => GiveStar(key, word, shortListGroup));
 
             //string count = $"({shortListGroup.Count} / {longListGroup.Count})";
             //string count = $"({longListGroup.Count})";
@@ -151,7 +153,7 @@ void OutputLongList() {
         // put asterix on non-answer words
         var longListGroupStarred = longListGroup
             //.OrderBy(word => word)
-            .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
+            .Select(word => GiveStar(key, word, shortListGroup));
 
         string count = $"({longListGroup.Count} = {shortListGroup.Count} + {nonAnswersButValid})";
         writer.WriteLine($"{prefix}{key.ToUpper()} {count}: {string.Join(" ", longListGroupStarred)}");
@@ -160,5 +162,25 @@ void OutputLongList() {
     writer.Close();
 }
 OutputLongList();
+
+string GiveStar(string underscored, string solution, IEnumerable<string> shortGroup) {
+    string longlistStar = shortGroup.Contains(solution) ? "" : "*";
+    //string nowayStar = DoubleLetter(underscored, solution) ? "" : "‡";
+    string nowayStar = ""; // actually nah don't mark just because same letter twice.
+
+    return $"{nowayStar}{longlistStar}{solution}";
+}
+bool DoubleLetter(string underscored, string solution) {
+    int underscore = underscored.IndexOf('_');
+    if (underscore == -1) {
+        return true; // error / shouldn't happen
+    }
+    var ch = solution.Substring(underscore, 1);
+    if (underscored.Contains(ch)) {
+        // solution has same letter twice. That can actually happen.
+        return false;
+    }
+    return true;
+}
 
 Console.WriteLine("Done.");
