@@ -63,22 +63,24 @@ void OutputLongFocus() {
     foreach (var item in worstShortListCombos) {
 
         var key = item.Key;
+        var shortListGroup = item.Value;
         var longListGroup = longCombos[key];
-        var nonAnswersButValid = longListGroup.Count - item.Value.Count;
+
+        var nonAnswersButValid = longListGroup.Count - shortListGroup.Count;
 
         if (nonAnswersButValid > 0) {
             // put asterix on non-answer words
             var longListGroupStarred = longListGroup
                 //.OrderBy(word => word)
-                .Select(word => item.Value.Contains(word) ? word : $"*{word}");
+                .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
 
-            //string count = $"({item.Value.Count} + {nonAnswersButValid})";
-            //string count = $"({item.Value.Count} / {longListGroup.Count})";
+            //string count = $"({shortListGroup.Count} + {nonAnswersButValid})";
+            //string count = $"({shortListGroup.Count} / {longListGroup.Count})";
             string count = $"({longListGroup.Count})";
             writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
         } else {
-            string count = $"({item.Value.Count})";
-            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", item.Value)}");
+            string count = $"({shortListGroup.Count})";
+            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", shortListGroup)}");
         }
     }
     writer.Flush();
@@ -99,22 +101,23 @@ void OutputShortFocus() {
 
     foreach (var item in worstShortListCombos) {
         var key = item.Key;
+        var shortListGroup = item.Value;
         var longListGroup = longCombos[key];
-        var nonAnswersButValid = longListGroup.Count - item.Value.Count;
+        var nonAnswersButValid = longListGroup.Count - shortListGroup.Count;
 
         if (nonAnswersButValid > 0) {
             // put asterix on non-answer words
             var longListGroupStarred = longListGroup
                 //.OrderBy(word => word) // note: default order puts short list first
-                .Select(word => item.Value.Contains(word) ? word : $"*{word}");
+                .Select(word => shortListGroup.Contains(word) ? word : $"*{word}");
 
-            string count = $"({item.Value.Count} + {nonAnswersButValid})";
-            //string count = $"({item.Value.Count} / {longListGroup.Count})";
+            string count = $"({shortListGroup.Count} + {nonAnswersButValid})";
+            //string count = $"({shortListGroup.Count} / {longListGroup.Count})";
             //string count = $"({longListGroup.Count})";
             writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", longListGroupStarred)}");
         } else {
-            string count = $"({item.Value.Count})";
-            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", item.Value)}");
+            string count = $"({shortListGroup.Count})";
+            writer.WriteLine($"{prefix} {key} {count}: {string.Join(" ", shortListGroup)}");
         }
     }
     writer.Flush();
