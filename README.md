@@ -17,18 +17,18 @@ Wordle 282 6/6
 
 Worst combos, ordered by most short list solutions:
 
--  **_ight** (9 + 6 = 15): eight fight light might night right sight tight wight *aight *bight *dight *hight *kight *pight
--  **_ound** (8 + 1 = 9): bound found hound mound pound round sound wound *lound
--  **_atch** (7 + 3 = 10): batch catch hatch latch match patch watch *gatch *natch *ratch
--  **_ower** (7 + 3 = 10): cower lower mower power rower sower tower *bower *dower *vower
--  **sha_e** (7): shade shake shale shame shape share shave
--  **_aunt** (6 + 2 = 8): daunt gaunt haunt jaunt taunt vaunt *naunt *saunt
--  **_illy** (6 + 2 = 8): billy dilly filly hilly silly willy *gilly *tilly
--  **sta_e** (6 + 2 = 8): stage stake stale stare state stave *stade *stane
--  **_atty** (6 + 1 = 7): batty catty fatty patty ratty tatty *natty
--  **gra_e** (6 + 1 = 7): grace grade grape grate grave graze *grame
--  **s_ore** (6 + 1 = 7): score shore snore spore store swore *smore
--  **_aste** (6): baste caste haste paste taste waste
+-  **_IGHT** (9 + 6 = 15): eight fight light might night right sight tight wight *aight *bight *dight *hight *kight *pight
+-  **_OUND** (8 + 1 = 9): bound found hound mound pound round sound wound *lound
+-  **_ATCH** (7 + 3 = 10): batch catch hatch latch match patch watch *gatch *natch *ratch
+-  **_OWER** (7 + 3 = 10): cower lower mower power rower sower tower *bower *dower *vower
+-  **SHA_E** (7): shade shake shale shame shape share shave
+-  **_AUNT** (6 + 2 = 8): daunt gaunt haunt jaunt taunt vaunt *naunt *saunt
+-  **_ILLY** (6 + 2 = 8): billy dilly filly hilly silly willy *gilly *tilly
+-  **STA_E** (6 + 2 = 8): stage stake stale stare state stave *stade *stane
+-  **_ATTY** (6 + 1 = 7): batty catty fatty patty ratty tatty *natty
+-  **GRA_E** (6 + 1 = 7): grace grade grape grate grave graze *grame
+-  **S_ORE** (6 + 1 = 7): score shore snore spore store swore *smore
+-  **_ASTE** (6): baste caste haste paste taste waste
 -  [more...](https://gist.github.com/pengowray/5fc804cd2130e11ab7708263c71fcc79)
 
 More lists:
